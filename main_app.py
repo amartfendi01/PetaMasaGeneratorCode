@@ -46,7 +46,10 @@ if submit_execution_trigger:
         st.write("To unlock and download the clean, official, non-watermarked PDF ready for UPU system submission, please complete the secure FPX processing transaction link below:")
         
         checkout_redirect_url = create_fpx_payment_bill(student_name, student_email, 9.90)
-        st.markdown(f'<a href="{checkout_redirect_url}" target="_blank"><button style="background-color:#E65100;color:white;padding:14px 28px;border:none;border-radius:6px;cursor:pointer;font-size:18px;font-weight:bold;width:100%;">💳 Pay Now via FPX Online Banking</button></a>', unsafe-allow_html=True)
+        
+        # ✅ FIX: Separated string interpolation from the parameter assignments to comply with Python 3.14 
+        html_button_string = f'<a href="{checkout_redirect_url}" target="_blank"><button style="background-color:#E65100;color:white;padding:14px 28px;border:none;border-radius:6px;cursor:pointer;font-size:18px;font-weight:bold;width:100%;">💳 Pay Now via FPX Online Banking</button></a>'
+        st.markdown(html_button_string, unsafe-allow_html=True)
         
         st.markdown("### 📄 Real-Time Document Visual Preview (Watermarked Draft):")
         st.info(f"""
