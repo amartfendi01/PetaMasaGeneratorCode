@@ -91,27 +91,43 @@ st.title(title_text)
 st.markdown("---")
 st.write(desc_text)
 
-# ✅ FIXED: Placed the location selectors OUTSIDE the form so they update instantly 
-st.markdown(f"### {sec3_text}")
-selected_state = st.selectbox(state_label, list(university_data.keys()))
-target_uni = st.selectbox(uni_label, university_data[selected_state])
+# ─── PROGRAMMATIC SEQUENCE LAYOUT CONTROLLER ───
+# We initialize empty layout slots first so the numbers (1, 2, 3) render in perfect chronological order.
+slot_step1 = st.container()
+slot_step2 = st.container()
+slot_step3 = st.container()
+slot_step4 = st.container()
+slot_step5 = st.container()
 
+# 🗺️ DYNAMIC GEOCENTRIC INPUTS (Placed OUTSIDE the form to remain reactive, but inside slot_step3 for perfect layout hierarchy)
+with slot_step3:
+    st.markdown(f"### {sec3_text}")
+    selected_state = st.selectbox(state_label, list(university_data.keys()))
+    target_uni = st.selectbox(uni_label, university_data[selected_state])
+
+# Form is now placed at the bottom, but we push individual inputs back up into their respective layout slots
 with st.form("master_student_input_form"):
-    st.markdown(f"### {sec1_text}")
-    student_name = st.text_input(name_label, placeholder="e.g., Rahmad Rajali")
-    student_email = st.text_input(email_label, placeholder="e.g., chai004@yahoo.com")
     
-    st.markdown(f"### {sec2_text}")
-    examination_grades = st.text_area(grades_label, placeholder="e.g., BM: A, Math: A, English: C, SAINS: B, Fizik: B")
-    
-    st.markdown(f"### {major_label}")
-    target_major = st.text_input("", placeholder="e.g., Cyber Security")
-    
-    st.markdown(f"### {sec4_text}")
-    extracurricular_achievements = st.text_area(activity_label, placeholder="e.g., Pengawas sekolah, Ahli Aktif Kelab Robotik & STEM")
-    
-    st.markdown(f"### {sec5_text}")
-    core_reason_statement = st.text_area(reason_label, placeholder="e.g., Minat mendalam dalam pertahanan digital, mempelajari asas Linux secara kendiri.")
+    with slot_step1:
+        st.markdown(f"### {sec1_text}")
+        student_name = st.text_input(name_label, placeholder="e.g., Rahmad Rajali")
+        student_email = st.text_input(email_label, placeholder="e.g., chai004@yahoo.com")
+        
+    with slot_step2:
+        st.markdown(f"### {sec2_text}")
+        examination_grades = st.text_area(grades_label, placeholder="e.g., BM: A, Math: A, English: C, SAINS: B, Fizik: B")
+        
+    # Program major remains cleanly positioned right under the university selectbox inside slot_step3
+    with slot_step3:
+        target_major = st.text_input(major_label, placeholder="e.g., Cyber Security")
+        
+    with slot_step4:
+        st.markdown(f"### {sec4_text}")
+        extracurricular_achievements = st.text_area(activity_label, placeholder="e.g., Pengawas sekolah, Ahli Aktif Kelab Robotik & STEM")
+        
+    with slot_step5:
+        st.markdown(f"### {sec5_text}")
+        core_reason_statement = st.text_area(reason_label, placeholder="e.g., Minat mendalam dalam pertahanan digital, mempelajari asas Linux secara kendiri.")
     
     st.markdown("---")
     submit_execution_trigger = st.form_submit_button(label=btn_label)
