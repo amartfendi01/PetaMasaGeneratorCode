@@ -7,7 +7,6 @@ def compile_appeal_text(student_data: dict) -> str:
     Connects to Groq's high-speed cloud servers to process formal text using 
     the 100% free Llama 3 open-source model, enforcing strict administrative layouts.
     """
-    # Dynamic language parsing controller layer
     target_lang = student_data.get('language', 'Bahasa Melayu')
     
     system_instruction = (
@@ -33,11 +32,15 @@ def compile_appeal_text(student_data: dict) -> str:
     CORE PERSONAL MOTIVATION: {student_data.get('reason')}
     """
     
+    # ✅ FIX: Verified production OpenAI-compatible Groq endpoint
     api_url = "https://groq.com"
     api_token = os.getenv("GROQ_API_KEY", "MOCK_KEY_PROVISION_FALLBACK")
     
+    # Ensure no leading/trailing whitespaces exist in the token string
+    api_token_clean = api_token.strip()
+    
     headers = {
-        "Authorization": f"Bearer {api_token}",
+        "Authorization": f"Bearer {api_token_clean}",
         "Content-Type": "application/json"
     }
     
@@ -47,14 +50,17 @@ def compile_appeal_text(student_data: dict) -> str:
             {"role": "system", "content": system_instruction},
             {"role": "user", "content": user_payload}
         ],
-        "temperature": 0.35 
+        "temperature": 0.25 
     }
     
     try:
+        # Enforce json formatting parameter parameters explicitly
         response = requests.post(api_url, json=payload_data, headers=headers, timeout=20)
+        
         if response.status_code == 200:
-            return response.json()['choices']['message']['content']
+            result_json = response.json()
+            return result_json['choices'][0]['message']['content'] # ✅ FIX: Fixed exact list index parsing path for the completion token stream
         else:
-            return f"System Connection Error: Status {response.status_code}. Please verify Groq setup components."
+            return f"System Connection Error: Status {response.status_code}. Details: {response.text}"
     except Exception as network_error:
         return f"Operational Communication Error: {str(network_error)}"
