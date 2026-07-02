@@ -1,66 +1,103 @@
-# main_app.py - PetaMasa.my Master User Interface Presentation Layer
+# main_app.py - PetaMasa.my Multi-Language Core Presentation Layer
 import streamlit as st
 from ai_engine import compile_appeal_text
-from pdf_engine import generate_submission_pdf
 from payment_gateway import create_fpx_payment_bill
 
 st.set_page_config(
-    page_title="PetaMasa.my - Rayuan UPU Generator",
+    page_title="PetaMasa.my - Rayuan UPU Engine",
     page_icon="🇲🇾",
     layout="centered"
 )
 
-st.title("📝 PetaMasa.my - Automated UPU Appeal & Academic Resume Generator")
+# 🌐 MULTI-LANGUAGE DEPLOYMENT SWITCHES
+app_language = st.radio("Select Language / Pilihan Bahasa:", ("Bahasa Melayu", "English"), horizontal=True)
+
+if app_language == "Bahasa Melayu":
+    title_text = "📝 PetaMasa.my - Penjana Surat Rayuan UPU & Resume Akademik"
+    desc_text = "Bina surat rayuan rasmi (Surat Kiriman Rasmi) berformat penuh yang mematuhi syarat kemasukan universiti awam tempatan secara automatik."
+    sec1_text = "👤 Langkah 1: Profil Peribadi & Hubungan"
+    name_label = "Nama Penuh (seperti dalam MyKad):"
+    email_label = "Alamat Emel Aktif:"
+    sec2_text = "📊 Langkah 2: Keputusan Peperiksaan Asas"
+    grades_label = "Sila masukkan keputusan SPM atau Percubaan secara terperinci:"
+    sec3_text = "🏛️ Langkah 3: Institusi Sasaran & Program Pilihan"
+    uni_label = "Nama Universiti Pilihan:"
+    major_label = "Nama Program / Jurusan yang Dipohon:"
+    sec4_text = "🏆 Langkah 4: Pencapaian Kokurikulum & Impak Kepimpinan"
+    activity_label = "Senaraikan jawatan kepimpinan, kelab, atau kejayaan sukan/STEM:"
+    sec5_text = "🎯 Langkah 5: Justifikasi Rayuan & Motivasi Diri"
+    reason_label = "Nyatakan sebab kukuh mengapa jawatankuasa pemilihan perlu meluluskan rayuan anda:"
+    btn_label = "🚀 Bina Draf Surat Rayuan Rasmi"
+else:
+    title_text = "📝 PetaMasa.my - Automated UPU Appeal & Academic Resume Generator"
+    desc_text = "Generate a professionally formatted Surat Kiriman Rasmi appeal letter tailored to official Malaysian university admission criteria instantly."
+    sec1_text = "👤 Step 1: Personal & Academic Profile"
+    name_label = "Full Name (as per MyKad Identification card):"
+    email_label = "Your Active Email Address:"
+    sec2_text = "📊 Step 2: Academic Metrics Log"
+    grades_label = "List Core SPM or Trial Marks Results exactly:"
+    sec3_text = "🏛️ Step 3: Targeted Institution & Strategic Direction"
+    uni_label = "Name of Targeted Higher Ed Institution:"
+    major_label = "Proposed Course / Major Selection Program:"
+    sec4_text = "🏆 Step 4: Holistic Co-Curricular & Extracurricular Highlights"
+    activity_label = "List Leadership Roles, Sports, or Club/STEM Achievements:"
+    sec5_text = "🎯 Step 5: Core Personal Motivation & Appeal Rationale"
+    reason_label = "Explain why you must excel in this major and why the board should approve your intake layout:"
+    btn_label = "🚀 Compile Premium Appeal Document Asset"
+
+st.title(title_text)
 st.markdown("---")
-st.write("Generate a professionally formatted Surat Kiriman Rasmi appeal letter tailored to official Malaysian university admission criteria instantly.")
+st.write(desc_text)
 
 with st.form("master_student_input_form"):
-    st.markdown("### 👤 Step 1: Personal & Academic Profile")
-    student_name = st.text_input("Full Name (as per MyKad Identification card):", placeholder="e.g., Muhammad Arif Bin Razak")
-    student_email = st.text_input("Your Active Email Address:", placeholder="e.g., arif.razak@gmail.com")
+    st.markdown(f"### {sec1_text}")
+    student_name = st.text_input(name_label, placeholder="e.g., Rahmad Rajali")
+    student_email = st.text_input(email_label, placeholder="e.g., chai004@yahoo.com")
     
-    st.markdown("### 📊 Step 2: Academic Metrics Log")
-    examination_grades = st.text_area("List Core SPM or Trial Marks Results exactly:", placeholder="e.g., BM: A, Sejarah: A-, Matematik: B+, Fizik: B, Kimia: C+")
+    st.markdown(f"### {sec2_text}")
+    examination_grades = st.text_area(grades_label, placeholder="e.g., BM: A, Math: A, English: C, Sains: B, Fizik: B")
     
-    st.markdown("### 🏛️ Step 3: Targeted Institution & Strategic Direction")
-    target_uni = st.text_input("Name of Targeted Higher Ed Institution:", placeholder="e.g., Universiti Malaya (UM)")
-    target_major = st.text_input("Proposed Course / Major Selection Program:", placeholder="e.g., Sarjana Muda Sains Komputer (Rangkaian)")
+    st.markdown(f"### {sec3_text}")
+    target_uni = st.text_input(uni_label, placeholder="e.g., Universiti Malaya")
+    target_major = st.text_input(major_label, placeholder="e.g., Cyber Security")
     
-    st.markdown("### 🏆 Step 4: Holistic Co-Curricular & Extracurricular Highlights")
-    extracurricular_achievements = st.text_area("List Leadership Roles, Sports, or Club Achievements:", placeholder="e.g., Pengerusi Kelab Robotik Sekolah, Johan Bahas Kebangsaan, Pengawas Sekolah")
+    st.markdown(f"### {sec4_text}")
+    extracurricular_achievements = st.text_area(activity_label, placeholder="e.g., Pengawas sekolah, Ahli Aktif Kelab Robotik & STEM")
     
-    st.markdown("### 🎯 Step 5: Core Personal Motivation & Appeal Rationale")
-    core_reason_statement = st.text_area("Explain why you must excel in this major and why the board should approve your intake layout:", placeholder="e.g., Active interest in mobile app production. Built three local python desktop scripts outside classroom syllabus hours.")
+    st.markdown(f"### {sec5_text}")
+    core_reason_statement = st.text_area(reason_label, placeholder="e.g., Minat mendalam dalam pertahanan digital, mempelajari asas Linux secara kendiri.")
     
     st.markdown("---")
-    submit_execution_trigger = st.form_submit_button(label="🚀 Compile Premium Appeal Document Asset")
+    submit_execution_trigger = st.form_submit_button(label=btn_label)
 
 if submit_execution_trigger:
     if not student_name or not student_email or not examination_grades or not target_major:
-        st.error("⚠️ Crucial data variables are missing. Please complete Name, Email, Grades, and Proposed Major fields to proceed.")
+        st.error("⚠️ Crucial data variables are missing. Please complete Name, Email, Grades, and Proposed Major fields.")
     else:
-        st.success("🎉 Academic metrics successfully mapped into backend compilation memory array layers!")
-        st.markdown("---")
-        st.warning("🔒 SECURITY BLOCKER: Your premium tailored document asset package has been successfully compiled and cached.")
-        st.markdown("### Transaction Total: **RM 9.90**")
-        st.write("To unlock and download the clean, official, non-watermarked PDF ready for UPU system submission, please complete the secure FPX processing transaction link below:")
-        
-        checkout_redirect_url = create_fpx_payment_bill(student_name, student_email, 9.90)
-        
-        # ✅ FIXED: Changed native parameter token string format to use an underscore instead of a hyphen
-        html_button_string = f'<a href="{checkout_redirect_url}" target="_blank"><button style="background-color:#E65100;color:white;padding:14px 28px;border:none;border-radius:6px;cursor:pointer;font-size:18px;font-weight:bold;width:100%;">💳 Pay Now via FPX Online Banking</button></a>'
-        st.markdown(html_button_string, unsafe_allow_html=True)
-        
-        st.markdown("### 📄 Real-Time Document Visual Preview (Watermarked Draft):")
-        st.info(f"""
-        **SURAT RAYUAN RASMI KEMASUKAN AKADEMIK - POWERED BY PETAMASA.MY**
-        
-        Nama Pemohon: {student_name}  
-        Alamat Emel: {student_email}  
-        Program Pilihan: {target_major} di {target_uni}  
-        
-        *Tuan / Puan Jawatankuasa Pemilihan,*
-        *PER: RAYUAN KEMASUKAN BAGI PROGRAM IJAZAH SARJANA MUDA {target_major.upper()}*
-        
-        *Merujuk kepada perkara di atas, saya selaku pemohon ingin mengemukakan rayuan rasmi... Keputusan akademik saya {examination_grades} menunjukkan komitmen tinggi saya terhadap subjek asas... Penglibatan saya sebagai {extracurricular_achievements} membuktikan kualiti kepimpinan...*
-        """)
+        with st.spinner("Compiling academic criteria via PetaMasa AI Engine..."):
+            student_payload = {
+                "name": student_name,
+                "email": student_email,
+                "grades": examination_grades,
+                "university": target_uni,
+                "course": target_major,
+                "activities": extracurricular_achievements,
+                "reason": core_reason_statement,
+                "language": app_language
+            }
+            
+            # 🔥 LIVE PRODUCTION RUN: Generate actual high-quality text from the AI engine
+            generated_appeal_letter = compile_appeal_text(student_payload)
+            
+            st.markdown("---")
+            st.warning("🔒 SECURITY BLOCKER: Your premium tailored document asset package has been successfully compiled.")
+            st.markdown("### Transaction Total: **RM 9.90**")
+            st.write("To unlock and download the clean, official, non-watermarked PDF ready for UPU system submission, please complete the secure FPX transaction below:")
+            
+            checkout_redirect_url = create_fpx_payment_bill(student_name, student_email, 9.90)
+            html_button_string = f'<a href="{checkout_redirect_url}" target="_blank"><button style="background-color:#E65100;color:white;padding:14px 28px;border:none;border-radius:6px;cursor:pointer;font-size:18px;font-weight:bold;width:100%;">💳 Pay Now via FPX Online Banking</button></a>'
+            st.markdown(html_button_string, unsafe_allow_html=True)
+            
+            # ✅ LIVE PREVIEW: Render the true, professionally formatted AI output instead of a static placeholder summary
+            st.markdown("### 📄 Real-Time Document Visual Preview (Watermarked Draft):")
+            st.info(generated_appeal_letter)
