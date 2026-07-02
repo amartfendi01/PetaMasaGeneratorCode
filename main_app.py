@@ -11,7 +11,6 @@ st.set_page_config(
 )
 
 # 🌐 UNIVERSAL REGIONAL UNIVERSITY DICTIONARY MAPPING
-# Organized by geographic location zone to simplify the UPU candidate lifecycle
 university_data = {
     "Wilayah Persekutuan / Kuala Lumpur": [
         "Universiti Malaya (UM)",
@@ -92,20 +91,21 @@ st.title(title_text)
 st.markdown("---")
 st.write(desc_text)
 
+# ✅ FIXED: Placed the location selectors OUTSIDE the form so they update instantly 
+st.markdown(f"### {sec3_text}")
+selected_state = st.selectbox(state_label, list(university_data.keys()))
+target_uni = st.selectbox(uni_label, university_data[selected_state])
+
 with st.form("master_student_input_form"):
     st.markdown(f"### {sec1_text}")
-    student_name = st.text_input(name_label, placeholder="e.g., Ahmad Toyyib")
-    student_email = st.text_input(email_label, placeholder="e.g., Ahmad_Toyyib@yahoo.com")
+    student_name = st.text_input(name_label, placeholder="e.g., Rahmad Rajali")
+    student_email = st.text_input(email_label, placeholder="e.g., chai004@yahoo.com")
     
     st.markdown(f"### {sec2_text}")
-    examination_grades = st.text_area(grades_label, placeholder="e.g., Bahasa Melayu (BM): A, Mathematics: A, English: C, Science: B,Sejarah: A, Physics: B, Additional Mathematics (Add Maths):A, ")
+    examination_grades = st.text_area(grades_label, placeholder="e.g., BM: A, Math: A, English: C, SAINS: B, Fizik: B")
     
-    st.markdown(f"### {sec3_text}")
-    # 🗺️ DYNAMIC GEOGRAPHIC ROUTING: Changes the university options based on the selected state zone
-    selected_state = st.selectbox(state_label, list(university_data.keys()))
-    target_uni = st.selectbox(uni_label, university_data[selected_state])
-    
-    target_major = st.text_input(major_label, placeholder="e.g., Cyber Security")
+    st.markdown(f"### {major_label}")
+    target_major = st.text_input("", placeholder="e.g., Cyber Security")
     
     st.markdown(f"### {sec4_text}")
     extracurricular_achievements = st.text_area(activity_label, placeholder="e.g., Pengawas sekolah, Ahli Aktif Kelab Robotik & STEM")
