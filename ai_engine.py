@@ -1,36 +1,38 @@
 # ai_engine.py - PetaMasa.my Free Groq AI API Engine Mapping Script
 import requests
 import os
-import json
 
 def compile_appeal_text(student_data: dict) -> str:
     """
     Connects to Groq's high-speed cloud servers to process formal text using 
-    the 100% free Llama 3 open-source model, enforcing strict Surat Kiriman Rasmi layouts.
+    the 100% free Llama 3 open-source model, enforcing strict administrative layouts.
     """
+    # Dynamic language parsing controller layer
+    target_lang = student_data.get('language', 'Bahasa Melayu')
+    
     system_instruction = (
         "You are an expert Malaysian Academic Admissions Counselor and Chief Registrar operating inside PetaMasa.my. "
-        "Your task is to write a formal, high-impact UPU Academic Appeal Letter in perfect, formal Bahasa Melayu. "
-        "You must strictly follow the traditional 'Surat Kiriman Rasmi' structural parameters.\n\n"
-        "REQUIRED LAYOUT FORMATTING STIPULATIONS:\n"
-        "1. SENDER DETAILS: Place the sender name, address, and contact markers cleanly at the top-left margin layout boundary.\n"
-        "2. RECIPIENT BLOCK: Place the institutional selection board address layout lines underneath the sender, separated by a clean spacer.\n"
-        "3. FORMAL HEADLINE: Include a clear capitalized bolded headline section matching standard civil service formats, starting exactly with: 'RAYUAN KEMASUKAN BAGI PROGRAM...'\n"
-        "4. INTRODUCTORY LINE: Start the paragraph body layout using formal administrative syntax, specifically: 'Merujuk kepada perkara di atas, saya...'\n"
-        "5. SELECTION VALUES: Highlight the applicant's core motivation scores, co-curricular highlights, and passion without inventing data attributes.\n"
-        "6. CLOSING PROVISIONS: Conclude with formal operational phrases like 'Sekian, terima kasih' and 'Yang benar,' followed by space for a signature block."
+        f"Your task is to write a highly detailed, comprehensive, and formal UPU Academic Appeal Letter in perfect, fluent {target_lang}.\n\n"
+        "CRITICAL MECHANICAL FORMATTING INSTRUCTIONS:\n"
+        "1. SENDER BLOCK: Place the sender name, email, and dummy markers for ID Card No, Address, and Phone No at the top-left margin layout boundary exactly like a professional corporate template.\n"
+        "2. RECIPIENT BLOCK: Address it formally to: Pengarah, Bahagian Kemasukan Pelajar IPTA, Jabatan Pendidikan Tinggi, Kementerian Pendidikan Tinggi, Putrajaya.\n"
+        "3. HORIZONTAL SEPARATOR: Separate the sender/recipient sections cleanly.\n"
+        "4. FORMAL HEADLINE: Include a bold, fully capitalized title line starting with: 'RAYUAN PERMOHONAN KEMASUKAN KE PROGRAM...'.\n"
+        "5. NUMERICAL PARAGRAPHS: Number each body paragraph clearly starting from paragraph 2 onwards (e.g., '2. Saya ingin...', '3. Untuk makluman...').\n"
+        "6. PERSUASIVE PARAGRAPH CORES: Expand each section to sound highly persuasive. Detail how their academic grades, leadership skills, and extracurricular activities align perfectly with the university's rigorous prerequisites. Maintain a humble, professional tone without using Americanized terminology.\n"
+        "7. CLOSING SIGNS: End with formal operational phrases ('Sekian, terima kasih', 'BERKHIDMAT UNTUK NEGARA', 'Yang benar'), followed by a clear signature block placeholder."
     )
     
     user_payload = f"""
-    APPLICANT FULL NAME: {student_data.get('name', 'N/A')}
-    EXAM MARKS RESULTS: {student_data.get('grades', 'N/A')}
-    TARGETED UNIVERSITY: {student_data.get('university', 'N/A')}
-    TARGETED COURSE MAJOR: {student_data.get('course', 'N/A')}
-    EXTRA-CURRICULAR HIGHLIGHTS: {student_data.get('activities', 'N/A')}
-    CORE RATIONALE REASONING: {student_data.get('reason', 'N/A')}
+    APPLICANT NAME: {student_data.get('name')}
+    EMAIL ADDRESS: {student_data.get('email')}
+    EXAM MARKS RESULTS: {student_data.get('grades')}
+    TARGETED UNIVERSITY: {student_data.get('university')}
+    TARGETED PROGRAM MAJOR: {student_data.get('course')}
+    CO-CURRICULAR STRENGTHS: {student_data.get('activities')}
+    CORE PERSONAL MOTIVATION: {student_data.get('reason')}
     """
     
-    # Routed toward Groq's standard open-source API infrastructure endpoint layers
     api_url = "https://groq.com"
     api_token = os.getenv("GROQ_API_KEY", "MOCK_KEY_PROVISION_FALLBACK")
     
@@ -40,20 +42,19 @@ def compile_appeal_text(student_data: dict) -> str:
     }
     
     payload_data = {
-        "model": "llama3-8b-8192", # 100% Free, optimized fast inference model
+        "model": "llama3-8b-8192",
         "messages": [
             {"role": "system", "content": system_instruction},
             {"role": "user", "content": user_payload}
         ],
-        "temperature": 0.25 
+        "temperature": 0.35 
     }
     
     try:
         response = requests.post(api_url, json=payload_data, headers=headers, timeout=20)
         if response.status_code == 200:
-            result_json = response.json()
-            return result_json['choices']['message']['content']
+            return response.json()['choices']['message']['content']
         else:
-            return f"System Connection Error: Status {response.status_code}. Please check Groq dashboard configurations."
+            return f"System Connection Error: Status {response.status_code}. Please verify Groq setup components."
     except Exception as network_error:
         return f"Operational Communication Error: {str(network_error)}"
