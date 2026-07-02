@@ -47,9 +47,9 @@ if submit_execution_trigger:
         
         checkout_redirect_url = create_fpx_payment_bill(student_name, student_email, 9.90)
         
-        # ✅ FIX: Separated string interpolation from the parameter assignments to comply with Python 3.14 
+        # ✅ FIXED: Changed native parameter token string format to use an underscore instead of a hyphen
         html_button_string = f'<a href="{checkout_redirect_url}" target="_blank"><button style="background-color:#E65100;color:white;padding:14px 28px;border:none;border-radius:6px;cursor:pointer;font-size:18px;font-weight:bold;width:100%;">💳 Pay Now via FPX Online Banking</button></a>'
-        st.markdown(html_button_string, unsafe-allow_html=True)
+        st.markdown(html_button_string, unsafe_allow_html=True)
         
         st.markdown("### 📄 Real-Time Document Visual Preview (Watermarked Draft):")
         st.info(f"""
