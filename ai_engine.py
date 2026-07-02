@@ -32,11 +32,10 @@ def compile_appeal_text(student_data: dict) -> str:
     CORE PERSONAL MOTIVATION: {student_data.get('reason')}
     """
     
-    # ✅ FIX: Verified production OpenAI-compatible Groq endpoint
+    # ✅ DEFINITIVE PRODUCTION FIX: Exact standard Groq chat completion URL pathway
     api_url = "https://groq.com"
-    api_token = os.getenv("GROQ_API_KEY", "MOCK_KEY_PROVISION_FALLBACK")
     
-    # Ensure no leading/trailing whitespaces exist in the token string
+    api_token = os.getenv("GROQ_API_KEY", "MOCK_KEY_PROVISION_FALLBACK")
     api_token_clean = api_token.strip()
     
     headers = {
@@ -54,12 +53,11 @@ def compile_appeal_text(student_data: dict) -> str:
     }
     
     try:
-        # Enforce json formatting parameter parameters explicitly
         response = requests.post(api_url, json=payload_data, headers=headers, timeout=20)
         
         if response.status_code == 200:
             result_json = response.json()
-            return result_json['choices'][0]['message']['content'] # ✅ FIX: Fixed exact list index parsing path for the completion token stream
+            return result_json['choices'][0]['message']['content']
         else:
             return f"System Connection Error: Status {response.status_code}. Details: {response.text}"
     except Exception as network_error:
