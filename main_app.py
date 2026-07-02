@@ -1,15 +1,56 @@
-# main_app.py - PetaMasa.my Multi-Language Core Presentation Layer
+# main_app.py - PetaMasa.my Master User Interface Presentation Layer
 import streamlit as st
 from ai_engine import compile_appeal_text
+from pdf_engine import generate_submission_pdf
 from payment_gateway import create_fpx_payment_bill
 
 st.set_page_config(
-    page_title="PetaMasa.my - Rayuan UPU Engine",
+    page_title="PetaMasa.my - Rayuan UPU Generator",
     page_icon="🇲🇾",
     layout="centered"
 )
 
-# 🌐 MULTI-LANGUAGE DEPLOYMENT SWITCHES
+# 🌐 UNIVERSAL REGIONAL UNIVERSITY DICTIONARY MAPPING
+# Organized by geographic location zone to simplify the UPU candidate lifecycle
+university_data = {
+    "Wilayah Persekutuan / Kuala Lumpur": [
+        "Universiti Malaya (UM)",
+        "Universiti Pertahanan Nasional Malaysia (UPNM)",
+        "Universiti Teknologi Malaysia (UTM KL Campus)"
+    ],
+    "Selangor": [
+        "Universiti Kebangsaan Malaysia (UKM)",
+        "Universiti Putra Malaysia (UPM)",
+        "Universiti Teknologi MARA (UiTM Shah Alam)"
+    ],
+    "Johor": [
+        "Universiti Teknologi Malaysia (UTM Skudai)",
+        "Universiti Tun Hussein Onn Malaysia (UTHM)"
+    ],
+    "Penang / Perak": [
+        "Universiti Sains Malaysia (USM)",
+        "Universiti Pendidikan Sultan Idris (UPSI)"
+    ],
+    "Pahang / Terengganu / Kelantan": [
+        "Universiti Malaysia Pahang Al-Sultan Abdullah (UMPSA)",
+        "Universiti Malaysia Terengganu (UMT)",
+        "Universiti Sultan Zainal Abidin (UniSZA)",
+        "Universiti Malaysia Kelantan (UMK)"
+    ],
+    "Kedah / Perlis": [
+        "Universiti Utara Malaysia (UUM)",
+        "Universiti Malaysia Perlis (UniMAP)"
+    ],
+    "Melaka / Negeri Sembilan": [
+        "Universiti Teknikal Malaysia Melaka (UTeM)",
+        "Universiti Sains Islam Malaysia (USIM)"
+    ],
+    "Sabah / Sarawak": [
+        "Universiti Malaysia Sabah (UMS)",
+        "Universiti Malaysia Sarawak (UNIMAS)"
+    ]
+}
+
 app_language = st.radio("Select Language / Pilihan Bahasa:", ("Bahasa Melayu", "English"), horizontal=True)
 
 if app_language == "Bahasa Melayu":
@@ -21,7 +62,8 @@ if app_language == "Bahasa Melayu":
     sec2_text = "📊 Langkah 2: Keputusan Peperiksaan Asas"
     grades_label = "Sila masukkan keputusan SPM atau Percubaan secara terperinci:"
     sec3_text = "🏛️ Langkah 3: Institusi Sasaran & Program Pilihan"
-    uni_label = "Nama Universiti Pilihan:"
+    state_label = "Pilih Lokasi / Negeri Universiti:"
+    uni_label = "Pilih Universiti Sasaran:"
     major_label = "Nama Program / Jurusan yang Dipohon:"
     sec4_text = "🏆 Langkah 4: Pencapaian Kokurikulum & Impak Kepimpinan"
     activity_label = "Senaraikan jawatan kepimpinan, kelab, atau kejayaan sukan/STEM:"
@@ -37,7 +79,8 @@ else:
     sec2_text = "📊 Step 2: Academic Metrics Log"
     grades_label = "List Core SPM or Trial Marks Results exactly:"
     sec3_text = "🏛️ Step 3: Targeted Institution & Strategic Direction"
-    uni_label = "Name of Targeted Higher Ed Institution:"
+    state_label = "Select University Location/State:"
+    uni_label = "Select Target University:"
     major_label = "Proposed Course / Major Selection Program:"
     sec4_text = "🏆 Step 4: Holistic Co-Curricular & Extracurricular Highlights"
     activity_label = "List Leadership Roles, Sports, or Club/STEM Achievements:"
@@ -51,14 +94,17 @@ st.write(desc_text)
 
 with st.form("master_student_input_form"):
     st.markdown(f"### {sec1_text}")
-    student_name = st.text_input(name_label, placeholder="e.g., Rahmad Rajali")
-    student_email = st.text_input(email_label, placeholder="e.g., chai004@yahoo.com")
+    student_name = st.text_input(name_label, placeholder="e.g., Ahmad Toyyib")
+    student_email = st.text_input(email_label, placeholder="e.g., Ahmad_Toyyib@yahoo.com")
     
     st.markdown(f"### {sec2_text}")
-    examination_grades = st.text_area(grades_label, placeholder="e.g., BM: A, Math: A, English: C, Sains: B, Fizik: B")
+    examination_grades = st.text_area(grades_label, placeholder="e.g., Bahasa Melayu (BM): A, Mathematics: A, English: C, Science: B,Sejarah: A, Physics: B, Additional Mathematics (Add Maths):A, ")
     
     st.markdown(f"### {sec3_text}")
-    target_uni = st.text_input(uni_label, placeholder="e.g., Universiti Malaya")
+    # 🗺️ DYNAMIC GEOGRAPHIC ROUTING: Changes the university options based on the selected state zone
+    selected_state = st.selectbox(state_label, list(university_data.keys()))
+    target_uni = st.selectbox(uni_label, university_data[selected_state])
+    
     target_major = st.text_input(major_label, placeholder="e.g., Cyber Security")
     
     st.markdown(f"### {sec4_text}")
@@ -86,7 +132,6 @@ if submit_execution_trigger:
                 "language": app_language
             }
             
-            # 🔥 LIVE PRODUCTION RUN: Generate actual high-quality text from the AI engine
             generated_appeal_letter = compile_appeal_text(student_payload)
             
             st.markdown("---")
@@ -98,6 +143,5 @@ if submit_execution_trigger:
             html_button_string = f'<a href="{checkout_redirect_url}" target="_blank"><button style="background-color:#E65100;color:white;padding:14px 28px;border:none;border-radius:6px;cursor:pointer;font-size:18px;font-weight:bold;width:100%;">💳 Pay Now via FPX Online Banking</button></a>'
             st.markdown(html_button_string, unsafe_allow_html=True)
             
-            # ✅ LIVE PREVIEW: Render the true, professionally formatted AI output instead of a static placeholder summary
             st.markdown("### 📄 Real-Time Document Visual Preview (Watermarked Draft):")
             st.info(generated_appeal_letter)
