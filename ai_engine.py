@@ -1,17 +1,15 @@
-# ai_engine.py - Core Backend Intelligence Mapping Code Matrix
+# ai_engine.py - PetaMasa.my Free Groq AI API Engine Mapping Script
 import requests
 import os
 import json
 
 def compile_appeal_text(student_data: dict) -> str:
     """
-    Takes plain text input form weights from the Streamlit web screen,
-    injects them behind the scenes into a rigid system prompt template,
-    and returns a professionally formatted letter layout.
+    Connects to Groq's high-speed cloud servers to process formal text using 
+    the 100% free Llama 3 open-source model, enforcing strict Surat Kiriman Rasmi layouts.
     """
-    # LEARNING NOTE: System prompts have been rebranded from old experimental parameters to PetaMasa.my
     system_instruction = (
-        "You are an expert Malaysian Academic Admissions Counselor and Chief Registrar. "
+        "You are an expert Malaysian Academic Admissions Counselor and Chief Registrar operating inside PetaMasa.my. "
         "Your task is to write a formal, high-impact UPU Academic Appeal Letter in perfect, formal Bahasa Melayu. "
         "You must strictly follow the traditional 'Surat Kiriman Rasmi' structural parameters.\n\n"
         "REQUIRED LAYOUT FORMATTING STIPULATIONS:\n"
@@ -23,7 +21,6 @@ def compile_appeal_text(student_data: dict) -> str:
         "6. CLOSING PROVISIONS: Conclude with formal operational phrases like 'Sekian, terima kasih' and 'Yang benar,' followed by space for a signature block."
     )
     
-    # Packaged user parameters extraction matrix mapping variables safely
     user_payload = f"""
     APPLICANT FULL NAME: {student_data.get('name', 'N/A')}
     EXAM MARKS RESULTS: {student_data.get('grades', 'N/A')}
@@ -33,10 +30,9 @@ def compile_appeal_text(student_data: dict) -> str:
     CORE RATIONALE REASONING: {student_data.get('reason', 'N/A')}
     """
     
-    api_url = "https://openai.com"
-    
-    # Read the secret token key variable loaded inside cloud system profiles
-    api_token = os.getenv("OPENAI_API_KEY", "MOCK_KEY_PROVISION_FALLBACK")
+    # Routed toward Groq's standard open-source API infrastructure endpoint layers
+    api_url = "https://groq.com"
+    api_token = os.getenv("GROQ_API_KEY", "MOCK_KEY_PROVISION_FALLBACK")
     
     headers = {
         "Authorization": f"Bearer {api_token}",
@@ -44,7 +40,7 @@ def compile_appeal_text(student_data: dict) -> str:
     }
     
     payload_data = {
-        "model": "gpt-4o-mini", # Cost-effective, high-speed production model optimized for Python 3.14 json formatting
+        "model": "llama3-8b-8192", # 100% Free, optimized fast inference model
         "messages": [
             {"role": "system", "content": system_instruction},
             {"role": "user", "content": user_payload}
@@ -54,12 +50,10 @@ def compile_appeal_text(student_data: dict) -> str:
     
     try:
         response = requests.post(api_url, json=payload_data, headers=headers, timeout=20)
-        
         if response.status_code == 200:
             result_json = response.json()
             return result_json['choices']['message']['content']
         else:
-            return f"System Connection Error: Status {response.status_code}. Please check API configurations."
-            
+            return f"System Connection Error: Status {response.status_code}. Please check Groq dashboard configurations."
     except Exception as network_error:
-        return f"Operational Communication Error occurred during execution: {str(network_error)}"
+        return f"Operational Communication Error: {str(network_error)}"

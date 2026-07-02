@@ -1,13 +1,11 @@
-# main_app.py - Master Application User Interface View Canvas
+# main_app.py - PetaMasa.my Master User Interface Presentation Layer
 import streamlit as st
 from ai_engine import compile_appeal_text
 from pdf_engine import generate_submission_pdf
 from payment_gateway import create_fpx_payment_bill
 
-# 1. ESTABLISH APP CANVAS SCREEN DESCRIPTIONS
-# LEARNING NOTE: The title configurations have been explicitly updated to register PetaMasa.my instead of old brand parameters
 st.set_page_config(
-    page_title="PetaMasa.my - Rayuan UPU Generator", # LEARNING NOTE: Old title tag: HalaTuju.my - Rayuan UPU Generator
+    page_title="PetaMasa.my - Rayuan UPU Generator",
     page_icon="🇲🇾",
     layout="centered"
 )
@@ -16,7 +14,6 @@ st.title("📝 PetaMasa.my - Automated UPU Appeal & Academic Resume Generator")
 st.markdown("---")
 st.write("Generate a professionally formatted Surat Kiriman Rasmi appeal letter tailored to official Malaysian university admission criteria instantly.")
 
-# 2. RENDER THE USER INPUT ELEMENT BOXES
 with st.form("master_student_input_form"):
     st.markdown("### 👤 Step 1: Personal & Academic Profile")
     student_name = st.text_input("Full Name (as per MyKad Identification card):", placeholder="e.g., Muhammad Arif Bin Razak")
@@ -38,25 +35,19 @@ with st.form("master_student_input_form"):
     st.markdown("---")
     submit_execution_trigger = st.form_submit_button(label="🚀 Compile Premium Appeal Document Asset")
 
-# 3. CONSOLIDATE ACTIONS AND LAUNCH PAYWALL INLINE VIEW CONSOLES
 if submit_execution_trigger:
     if not student_name or not student_email or not examination_grades or not target_major:
         st.error("⚠️ Crucial data variables are missing. Please complete Name, Email, Grades, and Proposed Major fields to proceed.")
     else:
         st.success("🎉 Academic metrics successfully mapped into backend compilation memory array layers!")
-        
-        # ACTIVATE REVENUE PROJECTION PAYWALL VIEW OBJECTS
         st.markdown("---")
         st.warning("🔒 SECURITY BLOCKER: Your premium tailored document asset package has been successfully compiled and cached.")
         st.markdown("### Transaction Total: **RM 9.90**")
         st.write("To unlock and download the clean, official, non-watermarked PDF ready for UPU system submission, please complete the secure FPX processing transaction link below:")
         
-        # Call the payment bill module function
         checkout_redirect_url = create_fpx_payment_bill(student_name, student_email, 9.90)
-        
         st.markdown(f'<a href="{checkout_redirect_url}" target="_blank"><button style="background-color:#E65100;color:white;padding:14px 28px;border:none;border-radius:6px;cursor:pointer;font-size:18px;font-weight:bold;width:100%;">💳 Pay Now via FPX Online Banking</button></a>', unsafe-allow_html=True)
         
-        # IN-APP COMPACT MOCK PREVIEW VALUE CONFIRMATION BLOCK
         st.markdown("### 📄 Real-Time Document Visual Preview (Watermarked Draft):")
         st.info(f"""
         **SURAT RAYUAN RASMI KEMASUKAN AKADEMIK - POWERED BY PETAMASA.MY**
