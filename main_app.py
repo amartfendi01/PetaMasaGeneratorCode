@@ -1,9 +1,11 @@
 # main_app.py - PetaMasa.my Master User Interface Presentation Layer
+# Version: 2026.4.2 (Chronological Sequential Alignment Variant)
 import streamlit as st
 from ai_engine import compile_appeal_text
 from pdf_engine import generate_submission_pdf
 from payment_gateway import create_fpx_payment_bill
 
+# Initialize global layout properties
 st.set_page_config(
     page_title="PetaMasa.my - Rayuan UPU Generator",
     page_icon="🇲🇾",
@@ -50,6 +52,7 @@ university_data = {
     ]
 }
 
+# Language profile selector mapping toggles
 app_language = st.radio("Select Language / Pilihan Bahasa:", ("Bahasa Melayu", "English"), horizontal=True)
 
 if app_language == "Bahasa Melayu":
@@ -101,37 +104,55 @@ st.title(title_text)
 st.markdown("---")
 st.write(desc_text)
 
-# ✅ UX FIX: Create dynamic dropdowns OUTSIDE the form structure using a clear tracking key rule.
-# This guarantees state switching occurs instantly without freezing or emptying inputs on submit.
-st.markdown(f"### {sec3_text}")
-selected_state = st.selectbox(state_label, list(university_data.keys()), key="user_selected_state_widget")
-target_uni = st.selectbox(uni_label, university_data[selected_state], key="user_selected_uni_widget")
+# Initialize Session State values to safely track active university selection indices across rendering loops
+if "active_state" not in st.session_state:
+    st.session_state.active_state = list(university_data.keys())[0]
 
-# All input variables are now safely, strictly grouped inside a singular unified form container.
+# Master Form Container Initialization
 with st.form("master_student_input_form", clear_on_submit=False):
     
+    # ─── STEP 1 ───
     st.markdown(f"### {sec1_text}")
-    student_name = st.text_input(name_label, placeholder="e.g., Rahmad Rajali")
-    student_email = st.text_input(email_label, placeholder="e.g., chai004@yahoo.com")
+    student_name = st.text_input(name_label, placeholder="e.g., Muhammad Arif")
+    student_email = st.text_input(email_label, placeholder="e.g., arif@gmail.com")
     
+    # ─── STEP 2 ───
     st.markdown(f"### {sec2_text}")
-    examination_grades = st.text_area(grades_label, placeholder="e.g., BM: A, Math: A, English: C, SAINS: B, Fizik: B")
+    examination_grades = st.text_area(grades_label, placeholder="e.g., BM: A, Math: A, Sejarah: B+")
     
-    st.markdown(f"### {major_label}")
-    target_major = st.text_input("", placeholder="e.g., Cyber Security")
+    # ─── STEP 3 (CHRONOLOGICALLY ALIGNED & CORRECTLY POSITIONED HERE) ───
+    st.markdown(f"### {sec3_text}")
     
+    # State Selector Widget mapping changes directly to session state
+    chosen_state = st.selectbox(
+        state_label, 
+        list(university_data.keys()), 
+        index=list(university_data.keys()).index(st.session_state.active_state)
+    )
+    
+    # Reactive loop check: if state is manually switched, trigger an immediate internal rerun
+    if chosen_state != st.session_state.active_state:
+        st.session_state.active_state = chosen_state
+        st.rerun() # Forces page to update indices instantly without clearing form cache data
+        
+    target_uni = st.selectbox(uni_label, university_data[st.session_state.active_state])
+    target_major = st.text_input(major_label, placeholder="e.g., Computer Science")
+    
+    # ─── STEP 4 ───
     st.markdown(f"### {sec4_text}")
-    extracurricular_achievements = st.text_area(activity_label, placeholder="e.g., Pengawas sekolah, Ahli Aktif Kelab Robotik & STEM")
+    extracurricular_achievements = st.text_area(activity_label, placeholder="e.g., Presiden Kelab Robotik")
     
+    # ─── STEP 5 ───
     st.markdown(f"### {sec5_text}")
-    core_reason_statement = st.text_area(reason_label, placeholder="e.g., Minat mendalam dalam pertahanan digital, mempelajari asas Linux secara kendiri.")
+    core_reason_statement = st.text_area(reason_label, placeholder="e.g., Minat mendalam dalam pembangunan kecerdasan buatan.")
     
     st.markdown("---")
     submit_execution_trigger = st.form_submit_button(label=btn_label)
 
+# System processing logic executed upon form approval validation
 if submit_execution_trigger:
     if not student_name or not student_email or not examination_grades or not target_major:
-        st.error(error_text) # ✅ LOCALIZATION FIX: Dynamically updates validation text language based on selector
+        st.error(error_text)
     else:
         with st.spinner(spinner_text):
             student_payload = {
