@@ -69,6 +69,11 @@ if app_language == "Bahasa Melayu":
     sec5_text = "🎯 Langkah 5: Justifikasi Rayuan & Motivasi Diri"
     reason_label = "Nyatakan sebab kukuh mengapa jawatankuasa pemilihan perlu meluluskan rayuan anda:"
     btn_label = "🚀 Bina Draf Surat Rayuan Rasmi"
+    error_text = "⚠️ Maklumat penting tidak lengkap. Sila isi medan Nama, Emel, Keputusan, dan Nama Program."
+    spinner_text = "Mengira kriteria akademik melalui Enjin AI PetaMasa..."
+    lock_text = "🔒 SEKATAN KESELAMATAN: Pakej dokumen rayuan premium anda telah berjaya dijana dan disimpan."
+    payment_desc = "Untuk membuka kunci dan memuat turun PDF rasmi tanpa tera air yang sedia dihantar ke sistem UPU, sila selesaikan transaksi FPX di bawah:"
+    preview_title = "📄 Previu Visual Dokumen Masa Nyata (Draf Tera Air):"
 else:
     title_text = "📝 PetaMasa.my - Automated UPU Appeal & Academic Resume Generator"
     desc_text = "Generate a professionally formatted Surat Kiriman Rasmi appeal letter tailored to official Malaysian university admission criteria instantly."
@@ -86,57 +91,49 @@ else:
     sec5_text = "🎯 Step 5: Core Personal Motivation & Appeal Rationale"
     reason_label = "Explain why you must excel in this major and why the board should approve your intake layout:"
     btn_label = "🚀 Compile Premium Appeal Document Asset"
+    error_text = "⚠️ Crucial data variables are missing. Please complete Name, Email, Grades, and Proposed Major fields."
+    spinner_text = "Compiling academic criteria via PetaMasa AI Engine..."
+    lock_text = "🔒 SECURITY BLOCKER: Your premium tailored document asset package has been successfully compiled."
+    payment_desc = "To unlock and download the clean, official, non-watermarked PDF ready for UPU system submission, please complete the secure FPX transaction below:"
+    preview_title = "📄 Real-Time Document Visual Preview (Watermarked Draft):"
 
 st.title(title_text)
 st.markdown("---")
 st.write(desc_text)
 
-# ─── PROGRAMMATIC SEQUENCE LAYOUT CONTROLLER ───
-# We initialize empty layout slots first so the numbers (1, 2, 3) render in perfect chronological order.
-slot_step1 = st.container()
-slot_step2 = st.container()
-slot_step3 = st.container()
-slot_step4 = st.container()
-slot_step5 = st.container()
+# ✅ UX FIX: Create dynamic dropdowns OUTSIDE the form structure using a clear tracking key rule.
+# This guarantees state switching occurs instantly without freezing or emptying inputs on submit.
+st.markdown(f"### {sec3_text}")
+selected_state = st.selectbox(state_label, list(university_data.keys()), key="user_selected_state_widget")
+target_uni = st.selectbox(uni_label, university_data[selected_state], key="user_selected_uni_widget")
 
-# 🗺️ DYNAMIC GEOCENTRIC INPUTS (Placed OUTSIDE the form to remain reactive, but inside slot_step3 for perfect layout hierarchy)
-with slot_step3:
-    st.markdown(f"### {sec3_text}")
-    selected_state = st.selectbox(state_label, list(university_data.keys()))
-    target_uni = st.selectbox(uni_label, university_data[selected_state])
-
-# Form is now placed at the bottom, but we push individual inputs back up into their respective layout slots
-with st.form("master_student_input_form"):
+# All input variables are now safely, strictly grouped inside a singular unified form container.
+with st.form("master_student_input_form", clear_on_submit=False):
     
-    with slot_step1:
-        st.markdown(f"### {sec1_text}")
-        student_name = st.text_input(name_label, placeholder="e.g., Rahmad Rajali")
-        student_email = st.text_input(email_label, placeholder="e.g., chai004@yahoo.com")
-        
-    with slot_step2:
-        st.markdown(f"### {sec2_text}")
-        examination_grades = st.text_area(grades_label, placeholder="e.g., BM: A, Math: A, English: C, SAINS: B, Fizik: B")
-        
-    # Program major remains cleanly positioned right under the university selectbox inside slot_step3
-    with slot_step3:
-        target_major = st.text_input(major_label, placeholder="e.g., Cyber Security")
-        
-    with slot_step4:
-        st.markdown(f"### {sec4_text}")
-        extracurricular_achievements = st.text_area(activity_label, placeholder="e.g., Pengawas sekolah, Ahli Aktif Kelab Robotik & STEM")
-        
-    with slot_step5:
-        st.markdown(f"### {sec5_text}")
-        core_reason_statement = st.text_area(reason_label, placeholder="e.g., Minat mendalam dalam pertahanan digital, mempelajari asas Linux secara kendiri.")
+    st.markdown(f"### {sec1_text}")
+    student_name = st.text_input(name_label, placeholder="e.g., Rahmad Rajali")
+    student_email = st.text_input(email_label, placeholder="e.g., chai004@yahoo.com")
+    
+    st.markdown(f"### {sec2_text}")
+    examination_grades = st.text_area(grades_label, placeholder="e.g., BM: A, Math: A, English: C, SAINS: B, Fizik: B")
+    
+    st.markdown(f"### {major_label}")
+    target_major = st.text_input("", placeholder="e.g., Cyber Security")
+    
+    st.markdown(f"### {sec4_text}")
+    extracurricular_achievements = st.text_area(activity_label, placeholder="e.g., Pengawas sekolah, Ahli Aktif Kelab Robotik & STEM")
+    
+    st.markdown(f"### {sec5_text}")
+    core_reason_statement = st.text_area(reason_label, placeholder="e.g., Minat mendalam dalam pertahanan digital, mempelajari asas Linux secara kendiri.")
     
     st.markdown("---")
     submit_execution_trigger = st.form_submit_button(label=btn_label)
 
 if submit_execution_trigger:
     if not student_name or not student_email or not examination_grades or not target_major:
-        st.error("⚠️ Crucial data variables are missing. Please complete Name, Email, Grades, and Proposed Major fields.")
+        st.error(error_text) # ✅ LOCALIZATION FIX: Dynamically updates validation text language based on selector
     else:
-        with st.spinner("Compiling academic criteria via PetaMasa AI Engine..."):
+        with st.spinner(spinner_text):
             student_payload = {
                 "name": student_name,
                 "email": student_email,
@@ -151,13 +148,13 @@ if submit_execution_trigger:
             generated_appeal_letter = compile_appeal_text(student_payload)
             
             st.markdown("---")
-            st.warning("🔒 SECURITY BLOCKER: Your premium tailored document asset package has been successfully compiled.")
+            st.warning(lock_text)
             st.markdown("### Transaction Total: **RM 9.90**")
-            st.write("To unlock and download the clean, official, non-watermarked PDF ready for UPU system submission, please complete the secure FPX transaction below:")
+            st.write(payment_desc)
             
             checkout_redirect_url = create_fpx_payment_bill(student_name, student_email, 9.90)
             html_button_string = f'<a href="{checkout_redirect_url}" target="_blank"><button style="background-color:#E65100;color:white;padding:14px 28px;border:none;border-radius:6px;cursor:pointer;font-size:18px;font-weight:bold;width:100%;">💳 Pay Now via FPX Online Banking</button></a>'
             st.markdown(html_button_string, unsafe_allow_html=True)
             
-            st.markdown("### 📄 Real-Time Document Visual Preview (Watermarked Draft):")
+            st.markdown(f"### {preview_title}")
             st.info(generated_appeal_letter)
