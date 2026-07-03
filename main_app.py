@@ -12,6 +12,12 @@ st.set_page_config(
     layout="centered"
 )
 
+# Initialize Session State variables to prevent data loss on rerun
+if "generated_letter" not in st.session_state:
+    st.session_state.generated_letter = None
+if "checkout_url" not in st.session_state:
+    st.session_state.checkout_url = None
+
 # 🌐 UNIVERSAL REGIONAL UNIVERSITY DICTIONARY MAPPING
 university_data = {
     "Wilayah Persekutuan / Kuala Lumpur": [
@@ -104,36 +110,29 @@ st.title(title_text)
 st.markdown("---")
 st.write(desc_text)
 
-# ─── CHRONOLOGICAL LAYOUT ENGINE STRUCTURE (WITHOUT BLOCKING THEME FORMS) ───
-
-# ─── LANGKAH 1 ───
+# ─── FORM FIELDS ───
 st.markdown(f"### {sec1_text}")
 student_name = st.text_input(name_label, placeholder="e.g., Muhammad Arif", key="cache_name_var")
 student_email = st.text_input(email_label, placeholder="e.g., arif@gmail.com", key="cache_email_var")
 
-# ─── LANGKAH 2 ───
 st.markdown(f"### {sec2_text}")
 examination_grades = st.text_area(grades_label, placeholder="e.g., BM: A, Math: A, Sejarah: B+", key="cache_grades_var")
 
-# ─── LANGKAH 3 (REACTIVE & SEQUENTIALLY POSITIONED PERFECTLY HERE) ───
 st.markdown(f"### {sec3_text}")
 chosen_state = st.selectbox(state_label, list(university_data.keys()), key="cache_state_select")
 target_uni = st.selectbox(uni_label, university_data[chosen_state], key="cache_uni_select")
 target_major = st.text_input(major_label, placeholder="e.g., Computer Science", key="cache_major_var")
 
-# ─── LANGKAH 4 ───
 st.markdown(f"### {sec4_text}")
 extracurricular_achievements = st.text_area(activity_label, placeholder="e.g., Presiden Kelab Robotik", key="cache_activity_var")
 
-# ─── LANGKAH 5 ───
 st.markdown(f"### {sec5_text}")
 core_reason_statement = st.text_area(reason_label, placeholder="e.g., Minat mendalam dalam pembangunan kecerdasan buatan.", key="cache_reason_var")
 
 st.markdown("---")
-# Standard execution button handles processing instantly without layout constraints
 submit_execution_trigger = st.button(label=btn_label)
 
-# System data validation pipeline processing
+# ─── PROCESS PIPELINE (TRIGGERS ONLY ON CLICK) ───
 if submit_execution_trigger:
     if not student_name or not student_email or not examination_grades or not target_major:
         st.error(error_text)
@@ -150,16 +149,19 @@ if submit_execution_trigger:
                 "language": app_language
             }
             
-            generated_appeal_letter = compile_appeal_text(student_payload)
-            
-            st.markdown("---")
-            st.warning(lock_text)
-            st.markdown("### Transaction Total: **RM 9.90**")
-            st.write(payment_desc)
-            
-            checkout_redirect_url = create_fpx_payment_bill(student_name, student_email, 9.90)
-            html_button_string = f'<a href="{checkout_redirect_url}" target="_blank"><button style="background-color:#E65100;color:white;padding:14px 28px;border:none;border-radius:6px;cursor:pointer;font-size:18px;font-weight:bold;width:100%;">💳 Pay Now via FPX Online Banking</button></a>'
-            st.markdown(html_button_string, unsafe_allow_html=True)
-            
-            st.markdown(f"### {preview_title}")
-            st.info(generated_appeal_letter)
+            # Save results directly to session state
+            st.session_state.generated_letter = compile_appeal_text(student_payload)
+            st.session_state.checkout_url = create_fpx_payment_bill(student_name, student_email, 9.90)
+
+# ─── DISPLAY RENDER LAYER (PERSISTENT ACROSS RERUNS) ───
+if st.session_state.generated_letter and st.session_state.checkout_url:
+    st.markdown("---")
+    st.warning(lock_text)
+    st.markdown("### Transaction Total: **RM 9.90**")
+    st.write(payment_desc)
+    
+    html_button_string = f'<a href="{st.session_state.checkout_url}" target="_blank"><button style="background-color:#E65100;color:white;padding:14px 28px;border:none;border-radius:6px;cursor:pointer;font-size:18px;font-weight:bold;width:100%;">💳 Pay Now via FPX Online Banking</button></a>'
+    st.markdown(html_button_string, unsafe_allow_html=True)
+    
+    st.markdown(f"### {preview_title}")
+    st.info(st.session_state.generated_letter)
