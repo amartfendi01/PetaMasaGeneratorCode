@@ -1,5 +1,5 @@
 # main_app.py - PetaMasa.my Master User Interface Presentation Layer
-# Version: 2026.4.2 (Chronological Sequential Alignment Variant)
+# Version: 2026.5.0 (Definitive Reactive Multi-Tier Layout Configuration)
 import streamlit as st
 from ai_engine import compile_appeal_text
 from pdf_engine import generate_submission_pdf
@@ -67,7 +67,7 @@ if app_language == "Bahasa Melayu":
     state_label = "Pilih Lokasi / Negeri Universiti:"
     uni_label = "Pilih Universiti Sasaran:"
     major_label = "Nama Program / Jurusan yang Dipohon:"
-    sec4_text = "🏆 Langkah 4: Pencapaian Kokurikulum & Impak Kepimpinan"
+    sec4_text = "🏆 Langkah 4: Pencapaian Kokurikulum & Impak Kemimpinan"
     activity_label = "Senaraikan jawatan kepimpinan, kelab, atau kejayaan sukan/STEM:"
     sec5_text = "🎯 Langkah 5: Justifikasi Rayuan & Motivasi Diri"
     reason_label = "Nyatakan sebab kukuh mengapa jawatankuasa pemilihan perlu meluluskan rayuan anda:"
@@ -104,52 +104,36 @@ st.title(title_text)
 st.markdown("---")
 st.write(desc_text)
 
-# Initialize Session State values to safely track active university selection indices across rendering loops
-if "active_state" not in st.session_state:
-    st.session_state.active_state = list(university_data.keys())[0]
+# ─── CHRONOLOGICAL LAYOUT ENGINE STRUCTURE (WITHOUT BLOCKING THEME FORMS) ───
 
-# Master Form Container Initialization
-with st.form("master_student_input_form", clear_on_submit=False):
-    
-    # ─── STEP 1 ───
-    st.markdown(f"### {sec1_text}")
-    student_name = st.text_input(name_label, placeholder="e.g., Muhammad Arif")
-    student_email = st.text_input(email_label, placeholder="e.g., arif@gmail.com")
-    
-    # ─── STEP 2 ───
-    st.markdown(f"### {sec2_text}")
-    examination_grades = st.text_area(grades_label, placeholder="e.g., BM: A, Math: A, Sejarah: B+")
-    
-    # ─── STEP 3 (CHRONOLOGICALLY ALIGNED & CORRECTLY POSITIONED HERE) ───
-    st.markdown(f"### {sec3_text}")
-    
-    # State Selector Widget mapping changes directly to session state
-    chosen_state = st.selectbox(
-        state_label, 
-        list(university_data.keys()), 
-        index=list(university_data.keys()).index(st.session_state.active_state)
-    )
-    
-    # Reactive loop check: if state is manually switched, trigger an immediate internal rerun
-    if chosen_state != st.session_state.active_state:
-        st.session_state.active_state = chosen_state
-        st.rerun() # Forces page to update indices instantly without clearing form cache data
-        
-    target_uni = st.selectbox(uni_label, university_data[st.session_state.active_state])
-    target_major = st.text_input(major_label, placeholder="e.g., Computer Science")
-    
-    # ─── STEP 4 ───
-    st.markdown(f"### {sec4_text}")
-    extracurricular_achievements = st.text_area(activity_label, placeholder="e.g., Presiden Kelab Robotik")
-    
-    # ─── STEP 5 ───
-    st.markdown(f"### {sec5_text}")
-    core_reason_statement = st.text_area(reason_label, placeholder="e.g., Minat mendalam dalam pembangunan kecerdasan buatan.")
-    
-    st.markdown("---")
-    submit_execution_trigger = st.form_submit_button(label=btn_label)
+# ─── LANGKAH 1 ───
+st.markdown(f"### {sec1_text}")
+student_name = st.text_input(name_label, placeholder="e.g., Muhammad Arif", key="cache_name_var")
+student_email = st.text_input(email_label, placeholder="e.g., arif@gmail.com", key="cache_email_var")
 
-# System processing logic executed upon form approval validation
+# ─── LANGKAH 2 ───
+st.markdown(f"### {sec2_text}")
+examination_grades = st.text_area(grades_label, placeholder="e.g., BM: A, Math: A, Sejarah: B+", key="cache_grades_var")
+
+# ─── LANGKAH 3 (REACTIVE & SEQUENTIALLY POSITIONED PERFECTLY HERE) ───
+st.markdown(f"### {sec3_text}")
+chosen_state = st.selectbox(state_label, list(university_data.keys()), key="cache_state_select")
+target_uni = st.selectbox(uni_label, university_data[chosen_state], key="cache_uni_select")
+target_major = st.text_input(major_label, placeholder="e.g., Computer Science", key="cache_major_var")
+
+# ─── LANGKAH 4 ───
+st.markdown(f"### {sec4_text}")
+extracurricular_achievements = st.text_area(activity_label, placeholder="e.g., Presiden Kelab Robotik", key="cache_activity_var")
+
+# ─── LANGKAH 5 ───
+st.markdown(f"### {sec5_text}")
+core_reason_statement = st.text_area(reason_label, placeholder="e.g., Minat mendalam dalam pembangunan kecerdasan buatan.", key="cache_reason_var")
+
+st.markdown("---")
+# Standard execution button handles processing instantly without layout constraints
+submit_execution_trigger = st.button(label=btn_label)
+
+# System data validation pipeline processing
 if submit_execution_trigger:
     if not student_name or not student_email or not examination_grades or not target_major:
         st.error(error_text)
